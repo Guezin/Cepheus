@@ -9,6 +9,9 @@ Globals:
     Layers:
       - !Ref CepheusLibrariesLayer
       - !Ref CepheusCommonLayer
+    Environment:
+      Variables:
+        API_SPACEX: 'https://api.spacexdata.com'
 
 Parameters:
   Project:

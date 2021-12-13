@@ -1,8 +1,10 @@
 import json
 import requests
 
+from common import config
+
 def handler(event, context):
-    response = requests.get('https://api.spacexdata.com/v4/launches/latest')
+    response = requests.get(f'https://api.spacexdata.com/v4/launches/latest')
 
     if response.status_code is not 200:
       raise Exception(f'Error - Status API SpaceX: {response.status_code}')
