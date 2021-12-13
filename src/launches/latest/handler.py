@@ -1,12 +1,12 @@
 import json
 import requests
 
-from common import config
+from common.config import API_SPACEX
 
 def handler(event, context):
-    response = requests.get(f'https://api.spacexdata.com/v4/launches/latest')
+    response = requests.get(f'{API_SPACEX}/v4/launches/latest')
 
-    if response.status_code is not 200:
+    if response.status_code != 200:
       raise Exception(f'Error - Status API SpaceX: {response.status_code}')
 
     latest_launch_data = response.json()
