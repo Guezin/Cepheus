@@ -85,7 +85,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Join ['-', [!Ref Project, "GetNextLaunchFn", !FindInMap [Stages, !Ref GitRefBranch, StageName]]]
-      CodeUri: src/api
+      CodeUri: src/launches/next_launch
       Handler: handler.handler
       Description: Get next launch
       Events:
