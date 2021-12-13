@@ -95,3 +95,18 @@ Resources:
             Path: /next/launch
             Method: GET
             RestApiId: !Ref CepheusAPI
+
+  GetLatestLaunchFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Join ['-', [!Ref Project, "GetLatestLaunchFn", !FindInMap [Stages, !Ref GitRefBranch, StageName]]]
+      CodeUri: src/launches/latest_launch
+      Handler: handler.handler
+      Description: Get latest launch
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /latest/launch
+            Method: GET
+            RestApiId: !Ref CepheusAPI
