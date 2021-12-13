@@ -1,0 +1,97 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Runtime: python3.8
+    MemorySize: 1024
+    Timeout: 120
+    Layers:
+      - !Ref CepheusLibrariesLayer
+      - !Ref CepheusCommonLayer
+
+Parameters:
+  Project:
+    Description: name project
+    Type: String
+    Default: Cepheus
+
+  GitRefBranch:
+    Type: String
+    Default: refs/heads/main
+
+Mappings:
+  Stages:
+    main:
+      StageName: prod
+      DomainName: cepheus.leandroguezinjunior.com
+    develop:
+      StageName: dev
+      DomainName: cepheusdev.leandroguezinjunior.com
+
+Resources:
+  CepheusAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Join ['-', ["CepheusAPI", !FindInMap [Stages, !Ref GitRefBranch, StageName]]]
+      StageName: !FindInMap
+        - Stages
+        - !Ref GitRefBranch
+        - StageName
+      Cors:        
+        AllowMethods: "'*'"
+        AllowHeaders: "'Authorization,Content-Type,If-Match'"
+        AllowOrigin: "'*'"
+      Domain:
+        DomainName: !FindInMap
+        - Stages
+        - !Ref GitRefBranch
+        - DomainName
+        CertificateArn: arn:aws:acm:us-east-1:905369903149:certificate/4c8e9b7e-ca7d-4fa4-9326-47eae0732f9e
+        SecurityPolicy: TLS_1_2
+
+  CepheusAPIMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      BasePath: "v1"
+      RestApiId: !Ref CepheusAPI
+      Stage: !Ref CepheusAPI.Stage
+      DomainName: !FindInMap
+        - Stages
+        - !Ref GitRefBranch
+        - DomainName
+
+  CepheusLibrariesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: bibliotecas externas.
+      ContentUri: layers/libraries
+      CompatibleRuntimes:
+        - python3.8
+    Metadata:
+      BuildMethod: python3.8
+  
+  CepheusCommonLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: bibliotecas internas.
+      ContentUri: layers/common
+      CompatibleRuntimes:
+        - python3.8
+    Metadata:
+      BuildMethod: python3.8
+
+  GetNextLaunchFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Join ['-', [!Ref Project, "GetNextLaunchFn", !FindInMap [Stages, !Ref GitRefBranch, StageName]]]
+      CodeUri: src/api
+      Handler: handler.handler
+      Description: Get next launch
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /next/launch
+            Method: GET
+            RestApiId: !Ref CepheusAPI

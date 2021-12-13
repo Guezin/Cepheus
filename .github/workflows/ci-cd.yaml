@@ -1,0 +1,43 @@
+name: Deploy CI/CD
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  Run-CI-CD:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Using setup sam
+        uses: aws-actions/setup-sam@v1
+
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Run Build
+        run: sam build
+      
+      - name: Run Deploy
+        run: |
+          sam deploy \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --stack-name Cepheus-${GITHUB_REF:11} \
+            --s3-bucket ${{ secrets.AWS_DEPLOY_BUCKET }} \
+            --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
+            --region ${{ secrets.AWS_REGION }} \
+            --parameter-overrides GitRefBranch=${GITHUB_REF:11} \
+            --debug
