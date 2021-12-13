@@ -125,3 +125,18 @@ Resources:
             Path: /past/launches
             Method: GET
             RestApiId: !Ref CepheusAPI
+
+  GetUpcomingLaunchesFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Join ['-', [!Ref Project, "GetUpcomingLaunchesFn", !FindInMap [Stages, !Ref GitRefBranch, StageName]]]
+      CodeUri: src/launches/past
+      Handler: handler.handler
+      Description: Get upcoming launches
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /upcoming/launches
+            Method: GET
+            RestApiId: !Ref CepheusAPI
