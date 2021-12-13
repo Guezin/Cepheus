@@ -85,7 +85,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Join ['-', [!Ref Project, "GetNextLaunchFn", !FindInMap [Stages, !Ref GitRefBranch, StageName]]]
-      CodeUri: src/launches/next_launch
+      CodeUri: src/launches/next
       Handler: handler.handler
       Description: Get next launch
       Events:
@@ -100,7 +100,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Join ['-', [!Ref Project, "GetLatestLaunchFn", !FindInMap [Stages, !Ref GitRefBranch, StageName]]]
-      CodeUri: src/launches/latest_launch
+      CodeUri: src/launches/latest
       Handler: handler.handler
       Description: Get latest launch
       Events:
@@ -108,5 +108,20 @@ Resources:
           Type: Api
           Properties:
             Path: /latest/launch
+            Method: GET
+            RestApiId: !Ref CepheusAPI
+
+  GetPastLaunchesFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Join ['-', [!Ref Project, "GetPastLaunchesFn", !FindInMap [Stages, !Ref GitRefBranch, StageName]]]
+      CodeUri: src/launches/past
+      Handler: handler.handler
+      Description: Get past launches
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /past/launches
             Method: GET
             RestApiId: !Ref CepheusAPI
