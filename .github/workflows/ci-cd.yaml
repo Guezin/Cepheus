@@ -27,10 +27,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Run Build
-        run: sam build
+      - name: Running Build
+        run: sam build --use-container
       
-      - name: Run Deploy
+      - name: Running Deploy
         run: |
           sam deploy \
             --no-confirm-changeset \

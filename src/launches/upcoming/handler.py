@@ -15,7 +15,11 @@ class UpcomingLaunches(Handler):
 
     upcoming_launches = [
       { 
-        'name': launch['name'], 
+        'mission': launch.get('name'),
+        'success': launch.get('success'),
+        'failures': launch.get('failures'),
+        'details': launch.get('details'),
+        'rocket_id': launch.get('rocket'),
         'date_utc': launch['date_utc'], 
         'date_local': launch['date_local']
       }
