@@ -1,9 +1,14 @@
-import json
 import requests
+from http import HTTPStatus
 
 from common.config import API_SPACEX
+from common.handlerbase import Handler, Result
 
-def handler(event, context):
+class LatestLaunch(Handler):
+  def pre_process(self):
+    pass
+
+  def handler(self):
     response = requests.get(f'{API_SPACEX}/v4/launches/latest')
 
     if response.status_code != 200:
@@ -17,7 +22,7 @@ def handler(event, context):
       'date_local': latest_launch_data['date_local'],
     }
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps(latest_launch, ensure_ascii=False).encode('utf8'),
-    }
+    return Result(HTTPStatus.OK, latest_launch)
+
+def handler(event, context):
+    return LatestLaunch(event, context).run()

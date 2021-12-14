@@ -1,9 +1,11 @@
-import json
 import requests
+from http import HTTPStatus
 
 from common.config import API_SPACEX
+from common.handlerbase import Handler, Result
 
-def handler(event, context):
+class UpcomingLaunches(Handler):
+  def handler(self):
     response = requests.get(f'{API_SPACEX}/v4/launches/upcoming')
 
     if response.status_code != 200:
@@ -20,7 +22,7 @@ def handler(event, context):
       for launch in upcoming_launches_data
     ]
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps(upcoming_launches, ensure_ascii=False).encode('utf8'),
-    }
+    return Result(HTTPStatus.OK, upcoming_launches)
+
+def handler(event, context):
+  return UpcomingLaunches(event, context).run()

@@ -1,9 +1,11 @@
-import json
 import requests
+from http import HTTPStatus
 
 from common.config import API_SPACEX
+from common.handlerbase import Handler, Result
 
-def handler(event, context):
+class NextLaunch(Handler):
+  def handler(self):
     response = requests.get(f'{API_SPACEX}/v4/launches/next')
 
     if response.status_code != 200:
@@ -17,7 +19,7 @@ def handler(event, context):
       'date_local': next_launch_data['date_local'],
     }
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps(next_launch, ensure_ascii=False).encode('utf8'),
-    }
+    return Result(HTTPStatus.OK, next_launch)
+
+def handler(event, context):
+  return NextLaunch(event, context).run()
