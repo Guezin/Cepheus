@@ -138,7 +138,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Join ['-', [!Ref Project, "GetUpcomingLaunchesFn", !FindInMap [Stages, !Ref GitRefBranch, StageName]]]
-      CodeUri: src/launches/past
+      CodeUri: src/launches/upcoming
       Handler: handler.handler
       Description: Get upcoming launches
       Events:
