@@ -12,6 +12,7 @@ Globals:
     Environment:
       Variables:
         API_SPACEX: 'https://api.spacexdata.com'
+        API_SPACEX_GRAPHQL: 'https://api.spacex.land/graphql/'
 
 Parameters:
   Project:
@@ -123,6 +124,8 @@ Resources:
       CodeUri: src/launches/past
       Handler: handler.handler
       Description: Get past launches
+      MemorySize: 2048
+      Timeout: 180
       Events:
         ApiEvent:
           Type: Api

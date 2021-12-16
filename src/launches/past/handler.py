@@ -1,28 +1,31 @@
 import requests
 from http import HTTPStatus
 
-from common.config import API_SPACEX
+from common.config import API_SPACEX_GRAPHQL
 from common.handlerbase import Handler, Result
-from common.translator import translate_word
+from common.translator import translate_word_if_exists
+from common.queries import past_launches_query
 
 class PastLaunches(Handler):
   def handler(self):
-    response = requests.get(f'{API_SPACEX}/v4/launches/past')
+    response = requests.post(API_SPACEX_GRAPHQL, json={'query': past_launches_query})
 
     if response.status_code != 200:
       raise Exception(f'Error - Status API SpaceX: {response.status_code}')
 
-    past_launches_data = response.json()
-    
+    past_launches_data = response.json()['data']['launchesPast']
+
     past_launches = [
       { 
-        'mission': launch.get('name'),
-        'success': launch.get('success'),
-        'failures': launch.get('failures'),
-        'details': launch.get('details'),
-        'date_utc': launch.get('date_utc'),
-        'date_local': launch.get('date_local'),
-        'rocket_id': launch.get('rocket')
+        'mission': launch.get('mission_name', ''),
+        'success': launch.get('launch_success', False),
+        'details': translate_word_if_exists(launch.get('details')),
+        'date_utc': launch.get('launch_date_utc', ''),
+        'rocket': {
+          'name': launch.get('rocket', {}).get('rocket', {}).get('name', ''),
+          'cost_per_launch': launch.get('rocket', {}).get('rocket', {}).get('cost_per_launch', ''),
+          'description': translate_word_if_exists(launch.get('rocket', {}).get('rocket', {}).get('description', ''))
+        }
       }
       for launch in past_launches_data
     ]

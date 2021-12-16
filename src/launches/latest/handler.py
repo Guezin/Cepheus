@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 from common.config import API_SPACEX
 from common.handlerbase import Handler, Result
-from common.translator import translate_word
+from common.translator import translate_word_if_exists
 
 class LatestLaunch(Handler):
   def pre_process(self):
@@ -24,21 +24,16 @@ class LatestLaunch(Handler):
       raise Exception(f'Error - Status API(/rockets/{rocket_id}) SpaceX: {rocket_data.status_code}')
 
     rocket = rocket_data.json()
-
-    failures = len(latest_launch_data['failures']) > 0 and [{ 'reason': translate_word(failure['reason']) } for failure in latest_launch_data['failures']] or []
-    details = latest_launch_data.get('details')
     
     latest_launch = {
       'mission': latest_launch_data.get('name', ''),
       'success': latest_launch_data.get('success', ''),
-      'failures': failures,
-      'details': details is not None and translate_word(details) or None,
+      'details': translate_word_if_exists(latest_launch_data.get('details')),
       'date_utc': latest_launch_data.get('date_utc', ''),
-      'date_local': latest_launch_data.get('date_local', ''),
       'rocket': {
         'name': rocket.get('name', ''),
         'cost_per_launch': rocket.get('cost_per_launch', ''),
-        'description': translate_word(rocket.get('description', '')),
+        'description': translate_word_if_exists(rocket.get('description')),
       },
     }
 
