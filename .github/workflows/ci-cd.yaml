@@ -4,6 +4,12 @@ on:
     branches:
       - main
       - develop
+    
+    paths:
+      - 'src/**'
+      - 'layers/**'
+      - template.yaml
+
 
 jobs:
   Run-CI-CD:
