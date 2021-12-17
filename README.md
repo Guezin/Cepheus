@@ -8,6 +8,13 @@ Antes de começar, você vai precisar apertar os cintos, porque foquete não tem
 
 <br>
 
+<strong>ENDPOINT BASE</strong>
+```bash
+https://apicepheus.leandroguezinjunior.com
+```
+
+<br>
+
 <strong>ENDPOINT 👉 listar o último lançamento</strong>
 
 ```bash
