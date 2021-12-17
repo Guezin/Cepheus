@@ -1,4 +1,4 @@
-<h1 align="center">Cepheus :rocket </h1>
+<h1 align="center">Cepheus 🚀 </h1>
 
 <p align="center">Nesse projeto, foi desenvolvido uma aplicação RESTful para listagem de lançamentos de missões espaciais.</p>
 
@@ -130,6 +130,7 @@ As seguintes ferramentas foram usadas na construção do projeto:
 - [AWS API Gateway](https://aws.amazon.com/pt/api-gateway/)
 - [AWS Lambda](https://aws.amazon.com/pt/lambda/)
 - Amazon Route 53 - [DNS](https://aws.amazon.com/pt/route53/)
+- Google translate API [Googletrans](https://py-googletrans.readthedocs.io/en/latest/)
 - GitHub Actions - [CI/CD](https://github.com/features/actions)
 
 
